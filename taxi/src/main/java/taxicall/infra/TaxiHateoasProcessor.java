@@ -29,6 +29,11 @@ public class TaxiHateoasProcessor
         );
         model.add(
             Link
+                .of(model.getRequiredLink("self").getHref() + "/accept")
+                .withRel("accept")
+        );
+        model.add(
+            Link
                 .of(model.getRequiredLink("self").getHref() + "/출발")
                 .withRel("출발")
         );

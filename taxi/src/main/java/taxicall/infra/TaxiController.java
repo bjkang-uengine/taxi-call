@@ -25,6 +25,7 @@ public class TaxiController {
     )
     public Taxi boarding(
         @PathVariable(value = "id") Long id,
+        @RequestBody BoardingCommand boardingCommand,
         HttpServletRequest request,
         HttpServletResponse response
     ) throws Exception {
@@ -33,7 +34,7 @@ public class TaxiController {
 
         optionalTaxi.orElseThrow(() -> new Exception("No Entity Found"));
         Taxi taxi = optionalTaxi.get();
-        taxi.boarding();
+        taxi.boarding(boardingCommand);
 
         taxiRepository.save(taxi);
         return taxi;
@@ -46,6 +47,7 @@ public class TaxiController {
     )
     public Taxi arrival(
         @PathVariable(value = "id") Long id,
+        @RequestBody ArrivalCommand arrivalCommand,
         HttpServletRequest request,
         HttpServletResponse response
     ) throws Exception {
@@ -54,7 +56,7 @@ public class TaxiController {
 
         optionalTaxi.orElseThrow(() -> new Exception("No Entity Found"));
         Taxi taxi = optionalTaxi.get();
-        taxi.arrival();
+        taxi.arrival(arrivalCommand);
 
         taxiRepository.save(taxi);
         return taxi;
@@ -67,6 +69,7 @@ public class TaxiController {
     )
     public Taxi paymentRequest(
         @PathVariable(value = "id") Long id,
+        @RequestBody PaymentRequestCommand paymentRequestCommand,
         HttpServletRequest request,
         HttpServletResponse response
     ) throws Exception {
@@ -75,7 +78,29 @@ public class TaxiController {
 
         optionalTaxi.orElseThrow(() -> new Exception("No Entity Found"));
         Taxi taxi = optionalTaxi.get();
-        taxi.paymentRequest();
+        taxi.paymentRequest(paymentRequestCommand);
+
+        taxiRepository.save(taxi);
+        return taxi;
+    }
+
+    @RequestMapping(
+        value = "taxis/{id}/accept",
+        method = RequestMethod.PUT,
+        produces = "application/json;charset=UTF-8"
+    )
+    public Taxi accept(
+        @PathVariable(value = "id") Long id,
+        @RequestBody AcceptCommand acceptCommand,
+        HttpServletRequest request,
+        HttpServletResponse response
+    ) throws Exception {
+        System.out.println("##### /taxi/accept  called #####");
+        Optional<Taxi> optionalTaxi = taxiRepository.findById(id);
+
+        optionalTaxi.orElseThrow(() -> new Exception("No Entity Found"));
+        Taxi taxi = optionalTaxi.get();
+        taxi.accept(acceptCommand);
 
         taxiRepository.save(taxi);
         return taxi;
@@ -88,6 +113,7 @@ public class TaxiController {
     )
     public Taxi departure(
         @PathVariable(value = "id") Long id,
+        @RequestBody DepartureCommand departureCommand,
         HttpServletRequest request,
         HttpServletResponse response
     ) throws Exception {
@@ -96,7 +122,7 @@ public class TaxiController {
 
         optionalTaxi.orElseThrow(() -> new Exception("No Entity Found"));
         Taxi taxi = optionalTaxi.get();
-        taxi.departure();
+        taxi.departure(departureCommand);
 
         taxiRepository.save(taxi);
         return taxi;

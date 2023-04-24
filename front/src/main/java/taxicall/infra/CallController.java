@@ -25,6 +25,7 @@ public class CallController {
     )
     public Call cancel(
         @PathVariable(value = "id") Long id,
+        @RequestBody CancelCommand cancelCommand,
         HttpServletRequest request,
         HttpServletResponse response
     ) throws Exception {
@@ -33,7 +34,7 @@ public class CallController {
 
         optionalCall.orElseThrow(() -> new Exception("No Entity Found"));
         Call call = optionalCall.get();
-        call.cancel();
+        call.cancel(cancelCommand);
 
         callRepository.save(call);
         return call;

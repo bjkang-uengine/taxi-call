@@ -37,7 +37,7 @@ public class Call {
         return callRepository;
     }
 
-    public void cancel() {
+    public void cancel(CancelCommand cancelCommand) {
         Canceled canceled = new Canceled(this);
         canceled.publishAfterCommit();
     }

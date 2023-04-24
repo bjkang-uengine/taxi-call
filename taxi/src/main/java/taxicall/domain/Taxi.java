@@ -5,7 +5,6 @@ import java.util.List;
 import javax.persistence.*;
 import lombok.Data;
 import taxicall.TaxiApplication;
-import taxicall.domain.Dispatched;
 
 @Entity
 @Table(name = "Taxi_table")
@@ -31,10 +30,7 @@ public class Taxi {
     private String userid;
 
     @PostPersist
-    public void onPostPersist() {
-        Dispatched dispatched = new Dispatched(this);
-        dispatched.publishAfterCommit();
-    }
+    public void onPostPersist() {}
 
     public static TaxiRepository repository() {
         TaxiRepository taxiRepository = TaxiApplication.applicationContext.getBean(
@@ -43,22 +39,27 @@ public class Taxi {
         return taxiRepository;
     }
 
-    public void boarding() {
+    public void boarding(BoardingCommand boardingCommand) {
         Boardinged boardinged = new Boardinged(this);
         boardinged.publishAfterCommit();
     }
 
-    public void arrival() {
+    public void arrival(ArrivalCommand arrivalCommand) {
         Arrivaled arrivaled = new Arrivaled(this);
         arrivaled.publishAfterCommit();
     }
 
-    public void paymentRequest() {
+    public void paymentRequest(PaymentRequestCommand paymentRequestCommand) {
         Paymented paymented = new Paymented(this);
         paymented.publishAfterCommit();
     }
 
-    public void departure() {
+    public void accept(AcceptCommand acceptCommand) {
+        Dispatched dispatched = new Dispatched(this);
+        dispatched.publishAfterCommit();
+    }
+
+    public void departure(DepartureCommand departureCommand) {
         Departured departured = new Departured(this);
         departured.publishAfterCommit();
     }

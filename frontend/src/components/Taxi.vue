@@ -42,7 +42,7 @@
                     @click="save"
                     v-else
             >
-                Accept
+                Save
             </v-btn>
             <v-btn
                     color="deep-purple lighten-2"
@@ -67,34 +67,72 @@
                     v-if="!editMode"
                     color="deep-purple lighten-2"
                     text
-                    @click="boarding"
+                    @click="openBoarding"
             >
                 Boarding
             </v-btn>
+            <v-dialog v-model="boardingDiagram" width="500">
+                <BoardingCommand
+                        @closeDialog="closeBoarding"
+                        @boarding="boarding"
+                ></BoardingCommand>
+            </v-dialog>
             <v-btn
                     v-if="!editMode"
                     color="deep-purple lighten-2"
                     text
-                    @click="arrival"
+                    @click="openArrival"
             >
                 Arrival
             </v-btn>
+            <v-dialog v-model="arrivalDiagram" width="500">
+                <ArrivalCommand
+                        @closeDialog="closeArrival"
+                        @arrival="arrival"
+                ></ArrivalCommand>
+            </v-dialog>
             <v-btn
                     v-if="!editMode"
                     color="deep-purple lighten-2"
                     text
-                    @click="paymentRequest"
+                    @click="openPaymentRequest"
             >
                 PaymentRequest
             </v-btn>
+            <v-dialog v-model="paymentRequestDiagram" width="500">
+                <PaymentRequestCommand
+                        @closeDialog="closePaymentRequest"
+                        @paymentRequest="paymentRequest"
+                ></PaymentRequestCommand>
+            </v-dialog>
             <v-btn
                     v-if="!editMode"
                     color="deep-purple lighten-2"
                     text
-                    @click="departure"
+                    @click="openAccept"
+            >
+                Accept
+            </v-btn>
+            <v-dialog v-model="acceptDiagram" width="500">
+                <AcceptCommand
+                        @closeDialog="closeAccept"
+                        @accept="accept"
+                ></AcceptCommand>
+            </v-dialog>
+            <v-btn
+                    v-if="!editMode"
+                    color="deep-purple lighten-2"
+                    text
+                    @click="openDeparture"
             >
                 Departure
             </v-btn>
+            <v-dialog v-model="departureDiagram" width="500">
+                <DepartureCommand
+                        @closeDialog="closeDeparture"
+                        @departure="departure"
+                ></DepartureCommand>
+            </v-dialog>
         </v-card-actions>
 
         <v-snackbar
@@ -132,6 +170,11 @@
                 timeout: 5000,
                 text: ''
             },
+            boardingDiagram: false,
+            arrivalDiagram: false,
+            paymentRequestDiagram: false,
+            acceptDiagram: false,
+            departureDiagram: false,
         }),
         computed:{
         },
@@ -226,16 +269,17 @@
             change(){
                 this.$emit('input', this.value);
             },
-            async boarding() {
+            async boarding(params) {
                 try {
                     if(!this.offline) {
-                        var temp = await axios.put(axios.fixUrl(this.value._links['택시탑승'].href))
+                        var temp = await axios.put(axios.fixUrl(this.value._links['택시탑승'].href), params)
                         for(var k in temp.data) {
                             this.value[k]=temp.data[k];
                         }
                     }
 
                     this.editMode = false;
+                    this.closeBoarding();
                 } catch(e) {
                     this.snackbar.status = true
                     if(e.response && e.response.data.message) {
@@ -245,16 +289,23 @@
                     }
                 }
             },
-            async arrival() {
+            openBoarding() {
+                this.boardingDiagram = true;
+            },
+            closeBoarding() {
+                this.boardingDiagram = false;
+            },
+            async arrival(params) {
                 try {
                     if(!this.offline) {
-                        var temp = await axios.put(axios.fixUrl(this.value._links['목적지도착'].href))
+                        var temp = await axios.put(axios.fixUrl(this.value._links['목적지도착'].href), params)
                         for(var k in temp.data) {
                             this.value[k]=temp.data[k];
                         }
                     }
 
                     this.editMode = false;
+                    this.closeArrival();
                 } catch(e) {
                     this.snackbar.status = true
                     if(e.response && e.response.data.message) {
@@ -264,16 +315,23 @@
                     }
                 }
             },
-            async paymentRequest() {
+            openArrival() {
+                this.arrivalDiagram = true;
+            },
+            closeArrival() {
+                this.arrivalDiagram = false;
+            },
+            async paymentRequest(params) {
                 try {
                     if(!this.offline) {
-                        var temp = await axios.put(axios.fixUrl(this.value._links['결제요청'].href))
+                        var temp = await axios.put(axios.fixUrl(this.value._links['결제요청'].href), params)
                         for(var k in temp.data) {
                             this.value[k]=temp.data[k];
                         }
                     }
 
                     this.editMode = false;
+                    this.closePaymentRequest();
                 } catch(e) {
                     this.snackbar.status = true
                     if(e.response && e.response.data.message) {
@@ -283,16 +341,23 @@
                     }
                 }
             },
-            async departure() {
+            openPaymentRequest() {
+                this.paymentRequestDiagram = true;
+            },
+            closePaymentRequest() {
+                this.paymentRequestDiagram = false;
+            },
+            async accept(params) {
                 try {
                     if(!this.offline) {
-                        var temp = await axios.put(axios.fixUrl(this.value._links['출발'].href))
+                        var temp = await axios.put(axios.fixUrl(this.value._links['accept'].href), params)
                         for(var k in temp.data) {
                             this.value[k]=temp.data[k];
                         }
                     }
 
                     this.editMode = false;
+                    this.closeAccept();
                 } catch(e) {
                     this.snackbar.status = true
                     if(e.response && e.response.data.message) {
@@ -301,6 +366,38 @@
                         this.snackbar.text = e
                     }
                 }
+            },
+            openAccept() {
+                this.acceptDiagram = true;
+            },
+            closeAccept() {
+                this.acceptDiagram = false;
+            },
+            async departure(params) {
+                try {
+                    if(!this.offline) {
+                        var temp = await axios.put(axios.fixUrl(this.value._links['출발'].href), params)
+                        for(var k in temp.data) {
+                            this.value[k]=temp.data[k];
+                        }
+                    }
+
+                    this.editMode = false;
+                    this.closeDeparture();
+                } catch(e) {
+                    this.snackbar.status = true
+                    if(e.response && e.response.data.message) {
+                        this.snackbar.text = e.response.data.message
+                    } else {
+                        this.snackbar.text = e
+                    }
+                }
+            },
+            openDeparture() {
+                this.departureDiagram = true;
+            },
+            closeDeparture() {
+                this.departureDiagram = false;
             },
             async () {
                 try {

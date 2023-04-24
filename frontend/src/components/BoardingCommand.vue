@@ -6,6 +6,7 @@
         </v-card-title>
 
         <v-card-text>
+            <Number label="Callid" v-model="value.callid" :editMode="editMode"/>
         </v-card-text>
 
         <v-card-actions>
@@ -41,6 +42,7 @@
             value: {},
         }),
         created() {
+            this.value.callid = 0;
         },
         watch: {
         },
